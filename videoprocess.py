@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 import matplotlib
 matplotlib.use('Agg') # Force non-interactive backend (Faster)
 import matplotlib.pyplot as plt
@@ -15,7 +13,7 @@ TIMESTAMPS_CSV = "video_timestamps.csv" # The file from the video recorder
 
 # Signal Parameters
 SAMPLE_RATE = 10000.0   # 10 kHz
-WINDOW_SIZE_SEC = 0.02  # 20ms window (Shows 20 cycles of 1kHz wave)
+WINDOW_SIZE_SEC = 0.2  # 20ms window (Shows 20 cycles of 1kHz wave)
 VOLTAGE_MIN = 0.0
 VOLTAGE_MAX = 5.0
 
@@ -26,21 +24,14 @@ class SignalParameters:
         self.voltage_min = voltage_min
         self.voltage_max = voltage_max
 
-@dataclass 
-class SignalParameters:
-    sample_rate: int = 10000
-    window_size_sec: float = 0.02
-    voltage_min: float = 0.0
-    voltage_max: float = 5.0
-
-def create_overlay(video_in, video_out, data_csv, timestamps_csv, signal_params:SignalParameters):
-    print(f"Loading voltage data from {data_csv}...")
+def create_overlay():
+    print(f"Loading voltage data from {DATA_CSV}...")
     
     # 1. Load Voltage Data (No Header or Header? Adjust as needed)
     # If your file has a header like 'Voltage', keep header=0. 
     # If it's just raw numbers, use header=None.
     try:
-        df_signal = pd.read_csv(data_csv)
+        df_signal = pd.read_csv(DATA_CSV)
         # Convert first column to numpy array
         voltage_data = df_signal.iloc[:, 0].to_numpy()
     except Exception as e:
@@ -51,7 +42,7 @@ def create_overlay(video_in, video_out, data_csv, timestamps_csv, signal_params:
 
     # 2. Load Video Timestamps (To sync strictly to the video's real time)
     try:
-        df_video_time = pd.read_csv(timestamps_csv)
+        df_video_time = pd.read_csv(TIMESTAMPS_CSV)
         video_timestamps = df_video_time['Timestamp'].to_numpy()
         # Normalize video start time to 0.0
         start_t = video_timestamps[0]
@@ -61,14 +52,14 @@ def create_overlay(video_in, video_out, data_csv, timestamps_csv, signal_params:
         video_timestamps = None
 
     # 3. Setup Video Input/Output
-    cap = cv2.VideoCapture(video_in)
+    cap = cv2.VideoCapture(VIDEO_IN)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     
     fourcc = cv2.VideoWriter_fourcc(*'XVID') 
-    out = cv2.VideoWriter(video_out, fourcc, fps, (width, height))
+    out = cv2.VideoWriter(VIDEO_OUT, fourcc, fps, (width, height))
     
     # 4. Setup Matplotlib Figure (The "Scope")
     dpi = 100
@@ -95,12 +86,12 @@ def create_overlay(video_in, video_out, data_csv, timestamps_csv, signal_params:
             
         # Calculate start/end times for the window
         t_end = current_time
-        t_start = t_end - signal_params.window_size_sec
+        t_start = t_end - WINDOW_SIZE_SEC
         
         # Convert Time -> Sample Indices
         # Index = Time * Sample_Rate
-        idx_end = int(t_end * signal_params.sample_rate)
-        idx_start = int(t_start * signal_params.sample_rate)
+        idx_end = int(t_end * SAMPLE_RATE)
+        idx_start = int(t_start * SAMPLE_RATE)
         
         # Handle "Pre-trigger" (Negative time before recording started)
         if idx_end < 0:
@@ -131,7 +122,7 @@ def create_overlay(video_in, video_out, data_csv, timestamps_csv, signal_params:
             ax.plot(subset_t, subset_v, color='#FFFF00', linewidth=2)
         
         # Fixed Scaling (Crucial for Oscilloscope look)
-        ax.set_ylim(signal_params.voltage_min, signal_params.voltage_max)
+        ax.set_ylim(VOLTAGE_MIN, VOLTAGE_MAX)
         ax.set_xlim(t_start, t_end) # This makes the graph "scroll"
         
         # Clean up axes (Minimalist HUD)
@@ -181,7 +172,7 @@ def create_overlay(video_in, video_out, data_csv, timestamps_csv, signal_params:
     cap.release()
     out.release()
     plt.close()
-    print(f"Done! Saved to {video_out}")
+    print(f"Done! Saved to {VIDEO_OUT}")
 
 if __name__ == "__main__":
     create_overlay()

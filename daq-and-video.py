@@ -35,7 +35,7 @@ class VideoRecorder:
         # Get actual properties
         w = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         h = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        fps = 60.0 # Standard webcam FPS
+        fps = 30.0 # Standard webcam FPS
         
         self.writer = cv2.VideoWriter(
             filename, 
