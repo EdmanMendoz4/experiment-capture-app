@@ -8,9 +8,9 @@ from scipy.signal import hilbert
 
 @dataclass
 class AppConfig:
-    video_in: str = r"C:\Users\edman\Documents\Experimentos\Num4\experiment_video.avi"
-    data_csv: str = r"C:\Users\edman\Documents\Experimentos\Num4\experiment_data.csv"
-    timestamps_csv: str = r"C:\Users\edman\Documents\Experimentos\Num4\video_timestamps.csv"
+    video_in: str = r"C:\Users\Sell\Desktop\Experimentos\SignalToggleTest\Test0\experiment_video.avi"
+    data_csv: str = r"C:\Users\Sell\Desktop\Experimentos\SignalToggleTest\Test0\experiment_data.csv"
+    timestamps_csv: str = r"C:\Users\Sell\Desktop\Experimentos\SignalToggleTest\Test0\video_timestamps.csv"
     sample_rate: float = 10000.0  
     window_size_sec: float = 0.05 
     expected_frequency: float = 100.0 

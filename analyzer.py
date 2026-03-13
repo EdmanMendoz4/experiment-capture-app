@@ -9,12 +9,12 @@ import scipy.fftpack
 
 @dataclass
 class AppConfig:
-    video_in: str = r"C:\Users\edman\Documents\Experimentos\Num1\experiment_video.avi"
-    data_csv: str = r"C:\Users\edman\Documents\Experimentos\Num1\experiment_data.csv"
-    timestamps_csv: str = r"C:\Users\edman\Documents\Experimentos\Num1\video_timestamps.csv"
+    video_in: str = r"C:\Users\Sell\Desktop\Experimentos\NewTests\Test0\experiment_video.avi"
+    data_csv: str = r"C:\Users\Sell\Desktop\Experimentos\NewTests\Test0\experiment_data.csv"
+    timestamps_csv: str = r"C:\Users\Sell\Desktop\Experimentos\NewTests\Test0\video_timestamps.csv"
     sample_rate: float = 10000.0  
     window_size_sec: float = 0.1 
-    expected_frequency: float = 100.0 
+    expected_frequency: float = 1000.0 
     filter_bandwidth: float = 20.0 
     voltage_min: float = -2.5
     voltage_max: float = 2.5
